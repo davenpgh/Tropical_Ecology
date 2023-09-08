@@ -1,0 +1,78 @@
+---
+title: "TropGraphsv2"
+author: "Grace Davenport"
+date: "7/29/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readxl)
+library(data.table)
+library(ggplot2)
+library(tidyr)
+library(gridExtra)
+panama = read_excel("C:/Users/daven/OneDrive/Documents/Classes/3.1/MATHBIO/TropEco.xlsx", sheet = "datasheet")
+attach(data)
+```
+
+#Regression Analysis
+```{r}
+lm(percEPT ~ conn_fence)#p=0.0395
+summary(lm(percEPT~conn_fence))
+lm(percEPT_no ~ temp)#p=0.04209
+summary(lm(percEPT_no ~ temp))
+
+lm(panama$aq_inv_ab ~ panama$rip_area)#p=0.130
+summary(lm(panama$aq_inv_ab ~ panama$rip_area))
+lm(panama$perc_ept ~ panama$rip_area)#p=0.1194
+summary(lm(panama$perc_ept ~ panama$rip_area))
+```
+
+#Analysis between farms
+```{r}
+kruskal.test(perc_ept ~ farm, data = panama)#p=0.07086
+kruskal.test(perc_eptnohp ~ farm, data = panama)#p=0.06601
+
+kruskal.test(aq_inv_div ~ farm, data = panama)#p=0.3179
+kruskal.test(aq_inv_rich ~ farm, data = panama)#p=0.3218
+kruskal.test(aq_inv_ab ~ farm, data = panama)#p=0.3088
+
+```
+
+```{r}
+myscat = function(dataset, x, y){
+  a <- ggplot(dataset, aes(.data[[x]],.data[[y]])) 
+  
+  a <- a + theme(panel.grid.major = element_blank(), 
+                 panel.grid.minor = element_blank(),
+                 panel.background = element_blank(), axis.line =
+                   element_line(colour = "black"))
+  
+  a <- a + geom_point(size=3, aes(color=.data[["farm"]]))
+  
+  a <- a + geom_smooth(method=lm, se=FALSE, color="black")
+  
+  a <- a + theme(axis.text = element_text(size=12),axis.title = 
+                   element_text(size=14,face="bold"))
+  
+  a <- a + theme(legend.position = "none")
+  return(a)
+}
+  
+data$farm = factor(data$farm)
+
+a1 = myscat(data, 'conn_fence', 'perc_ept')
+a2 = myscat(data, 'rip_carbon', 'aq_inv_div')
+a3 = myscat(data, 'total_carbon', 'aq_inv_div')
+a4 = myscat(data, 'total_carbon', 'perc_ept')
+a5 = myscat(data, 'total_carbon', 'perc_eptnohp')
+
+
+```
+
+
+
