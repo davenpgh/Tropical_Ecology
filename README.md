@@ -1,4 +1,4 @@
-# tropical_ecology
+# Tropical_Ecology
 A preliminary assessment of water quality in silvopastoral systems of Panama’s dry tropical forest.
 
 Dry tropical forests are unique, biodiverse ecosystems threatened by human development, 
